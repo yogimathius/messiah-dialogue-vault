@@ -75,12 +75,20 @@ export default function ThreadsIndex({ loaderData }: Route.ComponentProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Dialogue Threads</h1>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg"
-          >
-            New Thread
-          </button>
+          <div className="flex gap-3">
+            <Link
+              to="/import"
+              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg"
+            >
+              Import
+            </Link>
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg"
+            >
+              New Thread
+            </button>
+          </div>
         </div>
 
         {/* Search & Filters */}

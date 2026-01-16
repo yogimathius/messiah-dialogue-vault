@@ -216,25 +216,43 @@ export default function ThreadDetail({ loaderData }: Route.ComponentProps) {
 
         {/* Navigation Tabs */}
         <div className="border-b border-zinc-800 mb-6">
-          <div className="flex gap-6">
-            <Link
-              to={`/threads/${thread.id}`}
-              className="pb-2 border-b-2 border-indigo-600"
-            >
-              Turns
-            </Link>
-            <Link
-              to={`/threads/${thread.id}/dialogue`}
-              className="pb-2 text-zinc-400 hover:text-zinc-100"
-            >
-              Continue Dialogue
-            </Link>
-            <Link
-              to={`/threads/${thread.id}/context-packs`}
-              className="pb-2 text-zinc-400 hover:text-zinc-100"
-            >
-              Context Packs
-            </Link>
+          <div className="flex items-center justify-between">
+            <div className="flex gap-6">
+              <Link
+                to={`/threads/${thread.id}`}
+                className="pb-2 border-b-2 border-indigo-600"
+              >
+                Turns
+              </Link>
+              <Link
+                to={`/threads/${thread.id}/dialogue`}
+                className="pb-2 text-zinc-400 hover:text-zinc-100"
+              >
+                Continue Dialogue
+              </Link>
+              <Link
+                to={`/threads/${thread.id}/context-packs`}
+                className="pb-2 text-zinc-400 hover:text-zinc-100"
+              >
+                Context Packs
+              </Link>
+            </div>
+            <div className="flex gap-2 pb-2">
+              <a
+                href={`/threads/${thread.id}/export?format=markdown`}
+                download
+                className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
+              >
+                Export MD
+              </a>
+              <a
+                href={`/threads/${thread.id}/export?format=json`}
+                download
+                className="px-3 py-1 text-sm bg-zinc-800 hover:bg-zinc-700 rounded"
+              >
+                Export JSON
+              </a>
+            </div>
           </div>
         </div>
 
