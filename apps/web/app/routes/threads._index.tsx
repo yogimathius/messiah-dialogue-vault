@@ -77,6 +77,12 @@ export default function ThreadsIndex({ loaderData }: Route.ComponentProps) {
           <h1 className="text-3xl font-bold">Dialogue Threads</h1>
           <div className="flex gap-3">
             <Link
+              to="/search"
+              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg"
+            >
+              Search
+            </Link>
+            <Link
               to="/import"
               className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg"
             >
