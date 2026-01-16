@@ -1,15 +1,64 @@
-# Agent Instructions
+# Agent Instructions - Messiah Dialogue Vault
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
+
+## Project-Specific Workflow
+
+**IMPORTANT**: This project uses **atomic commits per bead, directly on main**. No pull requests.
+
+### Per-Bead Workflow
+
+For each bead you work on:
+
+1. **Start the bead**
+   ```bash
+   bd start <bead-id>
+   ```
+
+2. **Implement the feature**
+   - Write code for the bead
+   - Test locally
+   - Ensure no breaking changes
+
+3. **Commit atomically**
+   ```bash
+   git add .
+   git commit -m "feat: <bead-title> (<bead-id>)
+
+   <description of what was implemented>
+
+   Closes <bead-id>"
+   ```
+
+4. **Close the bead**
+   ```bash
+   bd close <bead-id>
+   ```
+
+5. **Push immediately**
+   ```bash
+   git push origin main
+   ```
+
+**Example commit message:**
+```
+feat: Build semantic search route with filters UI (messiah-dialogue-vault-cpk)
+
+- Created /search route with semantic search
+- Added filters for role, tags, date range
+- Implemented result snippets with highlighting
+
+Closes messiah-dialogue-vault-cpk
+```
 
 ## Quick Reference
 
 ```bash
 bd ready              # Find available work
 bd show <id>          # View issue details
-bd update <id> --status in_progress  # Claim work
-bd close <id>         # Complete work
-bd sync               # Sync with git
+bd start <id>         # Start work (sets status to in_progress)
+bd close <id>         # Complete work (sets status to closed)
+bd list               # List all beads
 ```
 
 ## Landing the Plane (Session Completion)
