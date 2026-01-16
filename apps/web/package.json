@@ -1,0 +1,35 @@
+{
+  "name": "@vault/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@vault/core": "workspace:*",
+    "@vault/db": "workspace:*",
+    "@vault/embeddings": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.2.0",
+    "@react-router/node": "^7.2.0",
+    "@react-router/serve": "^7.2.0",
+    "isbot": "^5.1.21",
+    "react-markdown": "^9.0.2",
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.2.0",
+    "@types/react": "^19.0.6",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.4.51",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.11"
+  }
+}

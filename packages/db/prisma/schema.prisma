@@ -1,0 +1,98 @@
+// Prisma schema for Messiah Dialogue Vault
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+model Thread {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  status      Status   @default(ACTIVE)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  turns        Turn[]
+  tags         ThreadTag[]
+  contextPacks ContextPack[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("threads")
+}
+
+model Turn {
+  id                 String                     @id @default(uuid())
+  threadId           String
+  role               Role
+  content            String
+  orderIndex         Int
+  embedding          Unsupported("vector(1024)")?
+  tokenCountEstimate Int?
+  annotations        Json?
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, orderIndex])
+  @@index([threadId, orderIndex])
+  @@index([role])
+  @@index([createdAt])
+  @@map("turns")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  color     String?
+  createdAt DateTime @default(now())
+
+  threads ThreadTag[]
+
+  @@map("tags")
+}
+
+model ThreadTag {
+  threadId String
+  tagId    String
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([threadId, tagId])
+  @@map("thread_tags")
+}
+
+model ContextPack {
+  id          String   @id @default(uuid())
+  threadId    String
+  title       String
+  body        Json
+  isCanonical Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@map("context_packs")
+}
+
+enum Status {
+  ACTIVE
+  ARCHIVED
+}
+
+enum Role {
+  MESSIAH
+  REFLECTION
+  NOTE
+}

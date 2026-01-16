@@ -1,0 +1,18 @@
+{
+  "name": "@vault/embeddings",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@vault/core": "workspace:*",
+    "fastembed": "^1.13.0",
+    "openai": "^4.77.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
