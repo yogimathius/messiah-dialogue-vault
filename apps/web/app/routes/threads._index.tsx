@@ -1,4 +1,4 @@
-import { json, redirect } from "react-router";
+import { redirect } from "react-router";
 import { Link } from "react-router";
 import type { Route } from "./+types/threads._index";
 import { prisma } from "~/lib/db.server";
@@ -39,7 +39,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     },
   });
 
-  return json({ threads, search, status });
+  return { threads, search, status };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -62,7 +62,7 @@ export async function action({ request }: Route.ActionArgs) {
     return redirect(`/threads/${thread.id}`);
   }
 
-  return json({ error: "Invalid intent" }, { status: 400 });
+  return Response.json({ error: "Invalid intent" }, { status: 400 });
 }
 
 export default function ThreadsIndex({ loaderData }: Route.ComponentProps) {

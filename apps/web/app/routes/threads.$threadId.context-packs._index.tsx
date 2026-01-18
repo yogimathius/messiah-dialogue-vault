@@ -1,4 +1,4 @@
-import { json, redirect } from "react-router";
+import { redirect } from "react-router";
 import { Link, Form } from "react-router";
 import type { Route } from "./+types/threads.$threadId.context-packs._index";
 import { prisma } from "~/lib/db.server";
@@ -23,7 +23,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     orderBy: [{ isCanonical: "desc" }, { updatedAt: "desc" }],
   });
 
-  return json({ thread, contextPacks });
+  return { thread, contextPacks };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -53,7 +53,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     return redirect(`/threads/${params.threadId}/context-packs/${pack.id}`);
   }
 
-  return json({ error: "Invalid intent" }, { status: 400 });
+  return Response.json({ error: "Invalid intent" }, { status: 400 });
 }
 
 export default function ContextPacksIndex({ loaderData }: Route.ComponentProps) {

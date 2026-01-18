@@ -1,4 +1,4 @@
-import { json } from "react-router";
+import type {} from "react-router";
 import { Link, Form } from "react-router";
 import type { Route } from "./+types/search";
 import { RetrievalService, SearchTurnsSchema } from "@vault/core";
@@ -12,7 +12,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const query = url.searchParams.get("q");
 
   if (!query) {
-    return json({ results: null, query: null, tags: await getAllTags() });
+    return { results: null, query: null, tags: await getAllTags() };
   }
 
   // Parse search parameters
@@ -37,7 +37,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const tags = await getAllTags();
 
-  return json({ results, query, tags, filters: searchInput });
+  return { results, query, tags, filters: searchInput };
 }
 
 async function getAllTags() {

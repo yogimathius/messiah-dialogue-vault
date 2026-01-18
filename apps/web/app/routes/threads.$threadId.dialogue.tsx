@@ -1,4 +1,4 @@
-import { json } from "react-router";
+import type {} from "react-router";
 import { Form } from "react-router";
 import type { Route } from "./+types/threads.$threadId.dialogue";
 import { prisma } from "~/lib/db.server";
@@ -25,7 +25,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     throw new Response("Thread not found", { status: 404 });
   }
 
-  return json({ thread });
+  return { thread };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -144,12 +144,12 @@ ${thread.description ? `Description: ${thread.description}` : ""}`;
   // 8. Generate embedding for reflection turn
   await retrieval.upsertTurnEmbedding(reflectionTurn.id);
 
-  return json({
+  return {
     messiahTurn,
     reflectionTurn,
     retrievedContext,
     usage: completion.usage,
-  });
+  };
 }
 
 export default function ThreadDialogue({ loaderData, actionData }: Route.ComponentProps) {

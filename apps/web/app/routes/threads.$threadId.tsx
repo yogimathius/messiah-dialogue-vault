@@ -1,4 +1,4 @@
-import { json, redirect } from "react-router";
+import { redirect } from "react-router";
 import { Link, Form } from "react-router";
 import type { Route } from "./+types/threads.$threadId";
 import { prisma } from "~/lib/db.server";
@@ -32,7 +32,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     orderBy: { name: "asc" },
   });
 
-  return json({ thread, allTags });
+  return { thread, allTags };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -51,7 +51,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       data,
     });
 
-    return json({ success: true });
+    return { success: true };
   }
 
   if (intent === "delete-thread") {
@@ -68,7 +68,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       data: { status: "ARCHIVED" },
     });
 
-    return json({ success: true });
+    return { success: true };
   }
 
   if (intent === "unarchive") {
@@ -77,7 +77,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       data: { status: "ACTIVE" },
     });
 
-    return json({ success: true });
+    return { success: true };
   }
 
   if (intent === "create-turn") {
@@ -99,7 +99,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     await prisma.turn.create({ data });
 
-    return json({ success: true });
+    return { success: true };
   }
 
   if (intent === "delete-turn") {
@@ -108,10 +108,10 @@ export async function action({ request, params }: Route.ActionArgs) {
       where: { id: turnId },
     });
 
-    return json({ success: true });
+    return { success: true };
   }
 
-  return json({ error: "Invalid intent" }, { status: 400 });
+  return Response.json({ error: "Invalid intent" }, { status: 400 });
 }
 
 function RoleBadge({ role }: { role: string }) {

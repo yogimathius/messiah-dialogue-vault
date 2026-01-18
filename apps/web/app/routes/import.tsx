@@ -1,4 +1,4 @@
-import { json, redirect } from "react-router";
+import { redirect } from "react-router";
 import type { Route } from "./+types/import";
 import { importThreadFromMarkdown, importThreadFromJson } from "@vault/core";
 import { useState } from "react";
@@ -23,7 +23,7 @@ export async function action({ request }: Route.ActionArgs) {
 
     return redirect(`/threads/${threadId}`);
   } catch (error) {
-    return json(
+    return Response.json(
       { error: error instanceof Error ? error.message : "Import failed" },
       { status: 400 }
     );

@@ -1,4 +1,4 @@
-import { json, redirect } from "react-router";
+import { redirect } from "react-router";
 import { Link, Form } from "react-router";
 import type { Route } from "./+types/threads.$threadId.context-packs.$packId";
 import { prisma } from "~/lib/db.server";
@@ -29,7 +29,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     take: 100,
   });
 
-  return json({ pack, turns });
+  return { pack, turns };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -62,7 +62,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       data,
     });
 
-    return json({ success: true });
+    return { success: true };
   }
 
   if (intent === "delete") {
@@ -73,7 +73,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     return redirect(`/threads/${params.threadId}/context-packs`);
   }
 
-  return json({ error: "Invalid intent" }, { status: 400 });
+  return Response.json({ error: "Invalid intent" }, { status: 400 });
 }
 
 export default function ContextPackDetail({ loaderData }: Route.ComponentProps) {
