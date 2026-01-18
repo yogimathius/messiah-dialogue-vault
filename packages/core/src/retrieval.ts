@@ -148,16 +148,15 @@ export class RetrievalService {
   async ensureTurnEmbedding(turnId: string): Promise<void> {
     const turn = await prisma.turn.findUnique({
       where: { id: turnId },
-      select: { embedding: true },
+      select: { id: true },
     });
 
-    // Check if embedding exists (this is a rough check)
+    // Check if turn exists
     if (!turn) {
       throw new Error(`Turn not found: ${turnId}`);
     }
 
-    // If no embedding, generate it
-    // Note: We can't directly check the Unsupported type, so we'll just regenerate
+    // Regenerate embedding (we can't query the Unsupported vector type directly)
     await this.upsertTurnEmbedding(turnId);
   }
 }
