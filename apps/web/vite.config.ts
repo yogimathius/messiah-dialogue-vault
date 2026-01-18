@@ -9,4 +9,5 @@ export default defineConfig({
       "~": path.resolve(__dirname, "./app"),
     },
   },
+  envDir: path.resolve(__dirname, "../.."),
 });
