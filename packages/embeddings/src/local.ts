@@ -45,7 +45,8 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
 
     const results: number[][] = [];
     for await (const embedding of embeddingsGenerator) {
-      results.push(Array.from(embedding));
+      // FastEmbed types can be tricky, ensuring we get number[]
+      results.push(Array.from(embedding as any) as number[]);
     }
 
     return results;
