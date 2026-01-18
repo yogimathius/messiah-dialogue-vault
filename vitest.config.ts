@@ -13,6 +13,7 @@ export default defineConfig({
       "@vault/db": path.resolve(__dirname, "./packages/db/src/index.ts"),
       "@vault/embeddings": path.resolve(__dirname, "./packages/embeddings/src/index.ts"),
       "@vault/mcp": path.resolve(__dirname, "./packages/mcp/src/index.ts"),
+      "~": path.resolve(__dirname, "./apps/web/app"),
     },
   },
 });
