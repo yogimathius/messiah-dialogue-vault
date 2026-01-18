@@ -80,7 +80,7 @@ export async function importThreadFromJson(
       title: jsonExport.thread.title,
       description: jsonExport.thread.description,
       status: jsonExport.thread.status,
-      metadata: jsonExport.thread.metadata,
+      metadata: jsonExport.thread.metadata ?? undefined,
     },
   });
 
@@ -93,7 +93,7 @@ export async function importThreadFromJson(
         content: turn.content,
         orderIndex: turn.orderIndex,
         tokenCountEstimate: turn.tokenCountEstimate,
-        annotations: turn.annotations,
+        annotations: turn.annotations ?? undefined,
       },
     });
   }
@@ -120,7 +120,7 @@ export async function importThreadFromJson(
       data: {
         threadId: thread.id,
         title: pack.title,
-        body: pack.body,
+        body: pack.body ?? {},
         isCanonical: pack.isCanonical,
       },
     });
