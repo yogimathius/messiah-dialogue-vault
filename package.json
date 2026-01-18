@@ -16,11 +16,17 @@
     "db:migrate": "pnpm --filter @vault/db migrate",
     "db:studio": "pnpm --filter @vault/db studio",
     "mcp:server": "pnpm --filter @vault/mcp server",
-    "mcp:example": "pnpm --filter @vault/mcp example"
+    "mcp:example": "pnpm --filter @vault/mcp example",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@vitest/ui": "^4.0.17",
+    "coverage-v8": "0.0.1-security",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react": "^7.37.4",
@@ -31,7 +37,8 @@
     "prettier-plugin-tailwindcss": "^0.6.10",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.21.0"
+    "typescript-eslint": "^8.21.0",
+    "vitest": "^4.0.17"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
