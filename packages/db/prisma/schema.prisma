@@ -16,15 +16,18 @@ model Thread {
   description String?
   status      Status   @default(ACTIVE)
   metadata    Json?
+  userId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  user         User?         @relation(fields: [userId], references: [id])
   turns        Turn[]
   tags         ThreadTag[]
   contextPacks ContextPack[]
 
   @@index([status])
   @@index([createdAt])
+  @@index([userId])
   @@map("threads")
 }
 
@@ -84,6 +87,50 @@ model ContextPack {
 
   @@index([threadId])
   @@map("context_packs")
+}
+
+// ============================================
+// Authentication Models (Lucia Auth)
+// ============================================
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions Session[]
+  threads  Thread[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// ============================================
+// API Keys (for MCP server authentication)
+// ============================================
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  name        String
+  keyHash     String    @unique
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("api_keys")
 }
 
 enum Status {
