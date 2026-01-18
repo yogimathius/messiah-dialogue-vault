@@ -1,45 +1,89 @@
-import { redirect } from "react-router";
+import { redirect, isRouteErrorResponse, useRouteError } from "react-router";
 import { Link } from "react-router";
 import type { Route } from "./+types/threads._index";
 import { prisma } from "~/lib/db.server";
 import { CreateThreadSchema } from "@vault/core";
 import { useState } from "react";
 
+// Error boundary for database connection issues
+export function ErrorBoundary() {
+  const error = useRouteError();
+  
+  let title = "Error";
+  let message = "An unexpected error occurred.";
+  
+  if (isRouteErrorResponse(error)) {
+    title = `${error.status} ${error.statusText}`;
+    message = error.data;
+  } else if (error instanceof Error) {
+    message = error.message;
+    if (message.includes("Can't reach database") || message.includes("Connection refused")) {
+      title = "Database Unavailable";
+      message = "Cannot connect to the database. Please ensure Docker is running and try again.";
+    }
+  }
+  
+  return (
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="max-w-md p-8 bg-zinc-900 rounded-lg border border-zinc-800 text-center">
+        <h1 className="text-2xl font-bold text-red-500 mb-4">{title}</h1>
+        <p className="text-zinc-400 mb-6">{message}</p>
+        <div className="space-y-3">
+          <p className="text-sm text-zinc-500">
+            Run <code className="px-2 py-1 bg-zinc-800 rounded">docker-compose up -d</code> to start the database.
+          </p>
+          <Link
+            to="/threads"
+            className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg"
+          >
+            Try Again
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const search = url.searchParams.get("q") || "";
   const status = url.searchParams.get("status") || "ACTIVE";
 
-  const threads = await prisma.thread.findMany({
-    where: {
-      status: status as "ACTIVE" | "ARCHIVED",
-      ...(search
-        ? {
-            OR: [
-              { title: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      tags: {
-        include: {
-          tag: true,
+  try {
+    const threads = await prisma.thread.findMany({
+      where: {
+        status: status as "ACTIVE" | "ARCHIVED",
+        ...(search
+          ? {
+              OR: [
+                { title: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+        _count: {
+          select: {
+            turns: true,
+          },
         },
       },
-      _count: {
-        select: {
-          turns: true,
-        },
+      orderBy: {
+        updatedAt: "desc",
       },
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
-  });
+    });
 
-  return { threads, search, status };
+    return { threads, search, status, error: null };
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error; // Let ErrorBoundary handle it
+  }
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -47,19 +91,33 @@ export async function action({ request }: Route.ActionArgs) {
   const intent = formData.get("intent");
 
   if (intent === "create") {
-    const data = CreateThreadSchema.parse({
-      title: formData.get("title"),
-      description: formData.get("description"),
-      metadata: formData.get("metadata")
-        ? JSON.parse(formData.get("metadata") as string)
-        : undefined,
-    });
+    try {
+      const data = CreateThreadSchema.parse({
+        title: formData.get("title"),
+        description: formData.get("description"),
+        metadata: formData.get("metadata")
+          ? JSON.parse(formData.get("metadata") as string)
+          : undefined,
+      });
 
-    const thread = await prisma.thread.create({
-      data,
-    });
+      const thread = await prisma.thread.create({
+        data,
+      });
 
-    return redirect(`/threads/${thread.id}`);
+      return redirect(`/threads/${thread.id}`);
+    } catch (error) {
+      console.error("Failed to create thread:", error);
+      if (error instanceof Error) {
+        return Response.json(
+          { error: error.message.includes("database") 
+              ? "Database unavailable. Please ensure Docker is running." 
+              : error.message 
+          },
+          { status: 500 }
+        );
+      }
+      throw error;
+    }
   }
 
   return Response.json({ error: "Invalid intent" }, { status: 400 });
