@@ -1,8 +1,8 @@
-import { FlagEmbedding } from 'fastembed';
-import { BaseEmbeddingProvider } from './base';
+import { FlagEmbedding } from "fastembed";
+import { BaseEmbeddingProvider } from "./base";
 
 export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
-  name = 'local-fastembed';
+  name = "local-fastembed";
   dimensions = 1024;
 
   private model: FlagEmbedding | null = null;
@@ -21,14 +21,14 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
   private async initialize(): Promise<void> {
     // BAAI/bge-large-en-v1.5 model (1024 dimensions)
     this.model = await FlagEmbedding.init({
-      model: 'BAAI/bge-large-en-v1.5',
+      model: "BAAI/bge-large-en-v1.5" as any,
       maxLength: 512,
     });
   }
 
   async embed(text: string): Promise<number[]> {
     await this.ensureInitialized();
-    if (!this.model) throw new Error('Model not initialized');
+    if (!this.model) throw new Error("Model not initialized");
 
     const truncated = this.truncateText(text);
     const embedding = await this.model.queryEmbed(truncated);
@@ -38,11 +38,16 @@ export class LocalEmbeddingProvider extends BaseEmbeddingProvider {
 
   async embedBatch(texts: string[]): Promise<number[][]> {
     await this.ensureInitialized();
-    if (!this.model) throw new Error('Model not initialized');
+    if (!this.model) throw new Error("Model not initialized");
 
     const truncated = texts.map((t) => this.truncateText(t));
-    const embeddings = await this.model.embed(truncated);
+    const embeddingsGenerator = await this.model.embed(truncated);
 
-    return embeddings.map((e) => Array.from(e));
+    const results: number[][] = [];
+    for await (const embedding of embeddingsGenerator) {
+      results.push(Array.from(embedding));
+    }
+
+    return results;
   }
 }

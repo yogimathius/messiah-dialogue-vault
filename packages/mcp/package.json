@@ -12,7 +12,7 @@
     "vault-mcp": "./dist/server.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/server.ts src/index.ts --format esm --dts --clean",
     "server": "tsx src/server.ts",
     "example": "tsx src/example-client.ts"
   },

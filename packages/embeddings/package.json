@@ -2,13 +2,14 @@
   "name": "@vault/embeddings",
   "version": "1.0.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsup src/index.ts --format esm --dts --clean"
   },
   "dependencies": {
     "@vault/core": "workspace:*",

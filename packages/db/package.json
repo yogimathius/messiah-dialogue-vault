@@ -3,22 +3,23 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./dist/index.js"
   },
   "scripts": {
     "generate": "prisma generate",
     "migrate": "prisma migrate dev",
     "studio": "prisma studio",
     "push": "prisma db push",
-    "build": "tsc"
+    "build": "tsup src/index.ts --format esm --dts --clean"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0"
   },
   "devDependencies": {
+    "@types/node": "^22.19.7",
     "prisma": "^6.1.0",
     "typescript": "^5.7.2"
   }

@@ -1,13 +1,13 @@
-import { prisma } from '@vault/db';
-import YAML from 'yaml';
-import type { MarkdownExport, JsonExport } from './types';
+import { prisma } from "@vault/db";
+import YAML from "yaml";
+import type { MarkdownExport, JsonExport } from "./types";
 
 export async function exportThreadToMarkdown(threadId: string): Promise<string> {
   const thread = await prisma.thread.findUnique({
     where: { id: threadId },
     include: {
       turns: {
-        orderBy: { orderIndex: 'asc' },
+        orderBy: { orderIndex: "asc" },
       },
       tags: {
         include: {
@@ -36,9 +36,9 @@ export async function exportThreadToMarkdown(threadId: string): Promise<string> 
   };
 
   // Build markdown
-  let markdown = '---\n';
+  let markdown = "---\n";
   markdown += YAML.stringify(markdownExport.frontmatter);
-  markdown += '---\n\n';
+  markdown += "---\n\n";
 
   markdown += `# ${thread.title}\n\n`;
 
@@ -46,13 +46,13 @@ export async function exportThreadToMarkdown(threadId: string): Promise<string> 
     markdown += `${thread.description}\n\n`;
   }
 
-  markdown += '---\n\n';
+  markdown += "---\n\n";
 
   // Group turns by role for readability
   for (const turn of markdownExport.turns) {
     markdown += `## **${turn.role}:**\n\n`;
     markdown += `${turn.content}\n\n`;
-    markdown += '---\n\n';
+    markdown += "---\n\n";
   }
 
   return markdown;
@@ -63,7 +63,7 @@ export async function exportThreadToJson(threadId: string): Promise<JsonExport> 
     where: { id: threadId },
     include: {
       turns: {
-        orderBy: { orderIndex: 'asc' },
+        orderBy: { orderIndex: "asc" },
       },
       tags: {
         include: {
@@ -85,6 +85,7 @@ export async function exportThreadToJson(threadId: string): Promise<JsonExport> 
       description: thread.description,
       status: thread.status,
       metadata: thread.metadata,
+      userId: thread.userId,
       createdAt: thread.createdAt,
       updatedAt: thread.updatedAt,
     },
