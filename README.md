@@ -13,6 +13,12 @@ A full-stack application for managing messianic dialogue threads with AI-powered
 - **MCP Server**: Model Context Protocol server for external integrations
 - **Configurable Embeddings**: Local (fastembed), OpenAI, or VoyageAI providers
 
+## Current Status
+
+- Core thread, turn, search, and context-pack flows appear implemented in the web app.
+- MCP server package exists but is marked TODO in the README.
+- Operational estimate: **75%** (core product features exist; MCP integration and polish pending).
+
 ## Tech Stack
 
 - **Frontend**: React Router v7 (SSR) + Tailwind CSS
@@ -101,6 +107,7 @@ messiah-dialogue-vault/
 By default, the app uses local embeddings (no API required). To use OpenAI or VoyageAI:
 
 **OpenAI:**
+
 ```env
 EMBEDDING_PROVIDER="openai"
 EMBEDDING_API_KEY="sk-..."
@@ -108,6 +115,7 @@ EMBEDDING_MODEL="text-embedding-3-large"  # or text-embedding-3-small
 ```
 
 **VoyageAI:**
+
 ```env
 EMBEDDING_PROVIDER="voyageai"
 EMBEDDING_API_KEY="pa-..."
@@ -115,6 +123,7 @@ EMBEDDING_MODEL="voyage-3"  # or voyage-3-large
 ```
 
 **Local (default):**
+
 ```env
 EMBEDDING_PROVIDER="local"
 # No API key required
@@ -122,13 +131,13 @@ EMBEDDING_PROVIDER="local"
 
 ### Models
 
-| Provider | Model | Dimensions |
-|----------|-------|------------|
-| Local | BAAI/bge-large-en-v1.5 | 1024 |
-| OpenAI | text-embedding-3-large | 3072 |
-| OpenAI | text-embedding-3-small | 1536 |
-| VoyageAI | voyage-3 | 1024 |
-| VoyageAI | voyage-3-large | 1024 |
+| Provider | Model                  | Dimensions |
+| -------- | ---------------------- | ---------- |
+| Local    | BAAI/bge-large-en-v1.5 | 1024       |
+| OpenAI   | text-embedding-3-large | 3072       |
+| OpenAI   | text-embedding-3-small | 1536       |
+| VoyageAI | voyage-3               | 1024       |
+| VoyageAI | voyage-3-large         | 1024       |
 
 ## Usage
 
@@ -156,6 +165,7 @@ EMBEDDING_PROVIDER="local"
 5. Submit
 
 The system will:
+
 - Save your MESSIAH turn
 - Retrieve semantically similar turns from thread history
 - Send context + conversation to Claude
@@ -165,6 +175,7 @@ The system will:
 ### Export/Import
 
 **Export to Markdown:**
+
 ```markdown
 ---
 title: My Thread
@@ -187,22 +198,48 @@ Response here...
 **Import from Markdown:**
 Upload a markdown file with the above format.
 
+## App Routes (Server Actions)
+
+This app is implemented with React Router server loaders/actions rather than a public REST API.
+
+- `/login`, `/signup`, `/logout`
+- `/threads`, `/threads/:threadId`
+- `/threads/:threadId/dialogue`
+- `/threads/:threadId/context-packs` and `/threads/:threadId/context-packs/:packId`
+- `/threads/:threadId/export`
+- `/import`
+- `/search`
+
 ## Database Schema
 
 **Thread**
+
 - id, title, description, status, metadata
 - Relations: turns, tags, contextPacks
 
 **Turn**
+
 - id, threadId, role, content, orderIndex, embedding
 - tokenCountEstimate, annotations
 - Relations: thread
 
+## Tests
+
+- `pnpm test` (2026-02-08) passed: 12 tests, 0 failures.
+
+## Future Work
+
+- Finish MCP server package and document tool surface area.
+- Add API documentation for any external integrations.
+- Extend test coverage for routes and DB workflows.
+
 **Tag**
+
 - id, name, color
 - Relations: threads (many-to-many)
 
 **ContextPack**
+
 - id, threadId, title, body, isCanonical
 - Relations: thread
 
@@ -282,6 +319,7 @@ fly deploy
 The MCP server will expose dialogue vault functionality via the Model Context Protocol:
 
 ### Tools
+
 - `list_threads`, `get_thread`, `create_thread`
 - `list_turns`, `get_turn`, `create_turn`, `update_turn`
 - `search_turns` (semantic search)
@@ -289,22 +327,26 @@ The MCP server will expose dialogue vault functionality via the Model Context Pr
 - `upsert_context_pack`, `get_context_pack`
 
 ### Resources
+
 - `vault://thread/{threadId}`
 - `vault://turn/{turnId}`
 
 ## Troubleshooting
 
 **Database connection failed:**
+
 - Ensure Docker is running: `docker ps`
 - Check PostgreSQL is healthy: `docker-compose ps`
 - Verify DATABASE_URL in `.env`
 
 **Embedding generation slow:**
+
 - Local embeddings download model on first run (~200MB)
 - Subsequent runs are fast
 - Consider using OpenAI/VoyageAI for production
 
 **Build errors:**
+
 - Run `pnpm install` to ensure dependencies are up to date
 - Clear `.turbo` cache: `rm -rf .turbo`
 - Regenerate Prisma client: `pnpm db:generate`
@@ -314,6 +356,7 @@ The MCP server will expose dialogue vault functionality via the Model Context Pr
 ### Retrieval Strategy
 
 The dialogue continuation feature uses hybrid scoring:
+
 - **70% similarity**: Cosine similarity from pgvector
 - **30% recency**: Exponential decay over 30 days
 - Top-k results by combined score
